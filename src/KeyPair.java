@@ -19,7 +19,7 @@ public class KeyPair {
         return this.value;
     }
 
-    public void sstValue(String value)  {
+    public void setValue(String value)  {
         this.value = value;
     }
 
