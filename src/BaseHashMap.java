@@ -15,6 +15,29 @@ public class BaseHashMap extends HashMap {
 
     }
 
+    protected void extendCapacity(){
+        KeyPair[] newBuckets = new KeyPair[capacity*extendRatio];
+        // 注意扩容后，需要重新计算 index
+        List<KeyPair> originPairSet =  pairSet();
+        capacity = capacity*extendRatio; // 因为 pairSet() 中会遍历 buckets，所以不能再前面更新 capacity
+        for (KeyPair keyPair : originPairSet) {
+            int index = indexFor(keyPair.getKey());
+            newBuckets[index] = keyPair;
+        }
+        buckets = newBuckets;
+    }
+
+    protected double getLoadFactor() {
+        return (double) size / capacity;
+    }
+
+    protected void checkIfExtend() {
+        if (getLoadFactor() > loadFactor) {
+            extendCapacity();
+        }
+    }
+
+
     protected int hashFunc(int key) {
         return key % capacity;
     }
@@ -27,18 +50,27 @@ public class BaseHashMap extends HashMap {
 
     public void put(int key,String value){
         // int index = hashFunc(key);
+        checkIfExtend();
         int index = indexFor(key);
 
 
         KeyPair curPair = buckets[index];
 
         if (curPair == null) {
+
             KeyPair newPair = new KeyPair(key,value);
             buckets[index] = newPair;
+            size++;
+        }
+        else if(curPair.getKey()==key){
+            // 如果 key 已经存在，就更新 value
+            buckets[index].setValue(value);
         }
         else {
-            // 因为没有考虑到 key 重复的情况，所以这里直接抛出异常
-            throw new IllegalStateException("HashMap is full!");
+            // 需要扩容
+            extendCapacity();
+            // 递归调用在扩容后的数组重新put 此时不会触发扩容（应该
+            put(key,value);
         }
 
     }
@@ -62,6 +94,7 @@ public class BaseHashMap extends HashMap {
         if (curPair != null&&curPair.getKey()==key) {
             // buckets.set(index,null);
             buckets[index] = null;
+            size--;
         }
         else {
             throw new IndexOutOfBoundsException("Key does not exist!");

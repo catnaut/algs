@@ -33,34 +33,33 @@ public class BaseHashMapTest {
     }
 
     @Test
-    public void testPut_full(){
+    public void testExtend(){
         BaseHashMap map = new BaseHashMap(10);
+        assertEquals(10,map.getCapacity());
 
-        Exception exception = assertThrows("pop in a empty stack", IllegalStateException.class, () -> {
-            for (int i = 0; i < 11; i++) {
-                map.put(i, String.valueOf(i));
-            }
-        });
+        for (int i = 0; i < 10; i++) {
+            map.put(i, String.valueOf(i));
+        }
 
-        String expectedMessage = "HashMap is full!";
-        String actualMessage = exception.getMessage();
-
-        assertTrue(actualMessage.contains(expectedMessage));
+        assertEquals(20, map.getCapacity());
     }
 
     @Test
     public void testPutDuplicateKey() {
         BaseHashMap map = new BaseHashMap(10);
         map.put(1, "one");
+        assertEquals("one", map.get(1));
+        map.put(1,"one+");
+        assertEquals("one+", map.get(1));
+    }
 
-        Exception exception = assertThrows("pop in a empty stack", IllegalStateException.class, () -> {
-            map.put(1, "one");
-        });
-
-        String expectedMessage = "HashMap is full!";
-        String actualMessage = exception.getMessage();
-
-        assertTrue(actualMessage.contains(expectedMessage));
+    @Test
+    public void testHashCollision() {
+        BaseHashMap map = new BaseHashMap(10);
+        map.put(1, "one");
+        map.put(11, "eleven");
+        assertEquals("one", map.get(1));
+        assertEquals("eleven", map.get(11));
     }
 
     @Test

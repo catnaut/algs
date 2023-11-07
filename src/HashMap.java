@@ -3,11 +3,20 @@ import java.util.List;
 public abstract class HashMap {
 
     protected int capacity;
+    protected int size=0;
+    protected float loadFactor = 0.75f;
+    protected int extendRatio = 2; // 为了方便我设置为 2，防止出现浮点数
+
+    public int getSize() {
+        return this.size;
+    }
 
 
     public int getCapacity() {
         return this.capacity;
     }
+
+    protected abstract  void extendCapacity();
 
     protected abstract int hashFunc(int key);
     protected abstract int indexFor(int key);
