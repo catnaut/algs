@@ -45,19 +45,46 @@ public class BinaryTree {
         return result;
     }
 
-    /** 使用栈模拟了递归 实现了先序遍历 **/
+    /**
+     * 使用栈模拟了递归 实现了先序遍历
+    **/
     static public List<Integer>  preOrderTraversal(BinaryTreeNode root){
         List<Integer> result = new ArrayList<Integer>();
         Stack<BinaryTreeNode> stack = new Stack<>();
 
         BinaryTreeNode cur = root;
-        while (cur != null) {
-            result.add(cur.val);
+        stack.push(cur);
+        while (!stack.isEmpty()) {
+            cur = stack.pop();
             if (cur.right != null) stack.push(cur.right); // 由于栈是先进后出，所以先将右子树压入栈中
             if (cur.left != null) stack.push(cur.left);
-            // cur = stack.pop();
-            cur = stack.isEmpty() ? null : stack.pop();
+            result.add(cur.val);
         }
+        return result;
+    }
+
+    static private void dfs(BinaryTreeNode root,String type,List<Integer> result) {
+        if (root == null) return;
+        if (type == "pre") result.add(root.val);
+        dfs(root.left,type,result);
+        if (type == "in") result.add(root.val);
+        dfs(root.right,type,result);
+        if (type == "post") result.add(root.val);
+    }
+
+    /**
+     * 使用递归 实现了中序遍历
+     * Ps 用栈太折磨了
+    **/
+    static public List<Integer>  inOrderTraversal(BinaryTreeNode root){
+        List<Integer> result = new ArrayList<Integer>();
+        dfs(root,"in",result);
+        return result;
+    }
+
+    static public List<Integer> postOrderTraversal(BinaryTreeNode root){
+        List<Integer> result = new ArrayList<Integer>();
+        dfs(root,"post",result);
         return result;
     }
 }
